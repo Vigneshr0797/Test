@@ -1,0 +1,161 @@
+Here’s a simpler and more straightforward version of the mail:
+
+:::writing{id=“68422” variant=“email” subject=“Update Required: JaCoCo Configuration in pom.xml”}
+Hi Team,
+
+The JaCoCo code coverage plugin in Jenkins has been deprecated. Because of this, code coverage must now be configured directly in the pom.xml file.
+
+I have shared the JaCoCo plugin configuration that needs to be added.
+Please update this configuration in the pom.xml of all APIs so that code coverage is correctly tracked in SonarQube.
+
+Kindly complete the update and confirm once done.
+
+Thanks & Regards,
+Villa
+
+:::
+
+If you want it even more casual or more formal, tell me 👍
+
+
+
+
+
+You’re hitting a classic SSL trust issue between Jenkins (on-prem) and Jira.
+The screenshots clearly show the root cause 👇
+
+⸻
+
+🔴 Root Cause (Confirmed from logs)
+
+sun.security.provider.certpath.SunCertPathBuilderException:
+unable to find valid certification path to requested target
+
+This means:
+
+👉 Jenkins JVM does NOT trust Jira’s SSL certificate
+👉 Usually happens when Jira uses:
+	•	Internal CA
+	•	Self-signed certificate
+	•	Corporate proxy SSL certificate
+
+Because of this, Jenkins cannot validate Jira, and the UI throws “Oops! A problem occurred”.
+
+⸻
+
+✅ What exactly is failing?
+	•	Jenkins version: 2.545
+	•	Error occurs when validating Jira connection
+	•	Jenkins REST call → Jira HTTPS endpoint
+	•	JVM truststore does not contain Jira’s CA cert
+
+This is NOT:
+	•	Jenkins bug
+	•	Jira plugin bug
+	•	Network issue
+
+⸻
+
+🛠️ PERMANENT FIX (Recommended)
+
+Step 1: Export Jira SSL certificate
+
+From Jenkins server:
+
+openssl s_client -connect jira.company.com:443 -showcerts </dev/null
+
+Copy the root or intermediate certificate
+Save it as:
+
+jira.crt
+
+
+⸻
+
+Step 2: Import certificate into Jenkins JVM truststore
+
+Find Jenkins Java:
+
+readlink -f $(which java)
+
+Example truststore path:
+
+$JAVA_HOME/lib/security/cacerts
+
+Default password: changeit
+
+keytool -importcert \
+-alias jira-cert \
+-file jira.crt \
+-keystore $JAVA_HOME/lib/security/cacerts
+
+Type yes when prompted.
+
+⸻
+
+Step 3: Restart Jenkins
+
+systemctl restart jenkins
+
+(or restart container if Jenkins is containerized)
+
+⸻
+
+Step 4: Validate Jira again
+
+Go to:
+
+Manage Jenkins → Configure System → Jira
+
+✅ Validation should succeed
+✅ No more “Oops!” screen
+
+⸻
+
+⚠️ TEMPORARY WORKAROUND (NOT recommended for PROD)
+
+Option 1: Disable SSL verification (if plugin supports it)
+
+Some Jira plugins have:
+
+☑ Disable SSL certificate validation
+
+Use ONLY for testing.
+
+⸻
+
+Option 2: Use JVM arg (VERY risky)
+
+-Dcom.sun.net.ssl.checkRevocation=false
+
+❌ Weakens security
+❌ Not acceptable in enterprise setups
+
+⸻
+
+🧠 Why this happened now?
+
+Common triggers:
+	•	Jira SSL cert renewed
+	•	CA chain changed
+	•	Jenkins Java upgraded
+	•	Jenkins moved to new server
+
+⸻
+
+✅ Final Recommendation (Enterprise Safe)
+
+✔ Import Jira CA certificate into Jenkins JVM
+✔ Restart Jenkins
+✔ Revalidate Jira
+
+This is the correct and audit-safe fix.
+
+⸻
+
+If you want, tell me:
+	•	Is Jira Cloud or Data Center?
+	•	Is Jenkins VM or Docker?
+	•	Do you use corporate proxy SSL?
+
+I’ll tailor the exact command for your setup 👍
