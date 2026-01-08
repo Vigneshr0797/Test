@@ -159,3 +159,117 @@ If you want, tell me:
 	•	Do you use corporate proxy SSL?
 
 I’ll tailor the exact command for your setup 👍
+
+You can extract the Jira SSL certificate directly as a .crt file from your Jenkins server (or any Linux box) in one clean command. Below are 3 reliable methods — use Method 1 (recommended).
+
+⸻
+
+✅ Method 1: Directly download Jira cert as .crt (BEST)
+
+Run this on the Jenkins server:
+
+echo | openssl s_client -connect jira.company.com:443 -servername jira.company.com \
+  | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > jira.crt
+
+✔ Creates jira.crt directly
+✔ Works for self-signed & internal CA
+✔ No browser required
+
+Verify:
+
+openssl x509 -in jira.crt -text -noout
+
+
+⸻
+
+✅ Method 2: Export from browser (Manual)
+
+If you can open Jira in a browser:
+
+Chrome / Edge
+	1.	Open https://jira.company.com
+	2.	Click 🔒 → Connection is secure
+	3.	Certificate → Details
+	4.	Export → Base-64 encoded X.509 (.CER)
+	5.	Rename:
+
+mv jira.cer jira.crt
+
+⚠️ Make sure you export the Root or Intermediate CA, not only the leaf cert.
+
+⸻
+
+✅ Method 3: Get FULL certificate chain (Recommended for corp PKI)
+
+If your Jira uses a corporate CA, extract all certs:
+
+openssl s_client -connect jira.company.com:443 -showcerts </dev/null
+
+Then split them:
+
+awk '/BEGIN CERTIFICATE/{i++}{print > "jira-chain-" i ".crt"}' <(openssl s_client -connect jira.company.com:443 -showcerts </dev/null)
+
+Import root + intermediate, not the leaf cert.
+
+⸻
+
+🔐 Import into Jenkins Java truststore
+
+keytool -importcert \
+-alias jira-ca \
+-file jira.crt \
+-keystore $JAVA_HOME/lib/security/cacerts
+
+Password:
+
+changeit
+
+Restart Jenkins:
+
+systemctl restart jenkins
+
+
+⸻
+
+🧠 How to know which cert to import?
+
+Run:
+
+openssl s_client -connect jira.company.com:443 -showcerts
+
+If you see:
+
+Verify return code: 20 (unable to get local issuer certificate)
+
+👉 Import Root CA
+
+If:
+
+Verify return code: 21 (unable to verify first certificate)
+
+👉 Import Intermediate CA
+
+⸻
+
+🚨 Common Mistake (causes SAME error again)
+
+❌ Importing only the leaf certificate
+❌ Importing into wrong Java (root vs jenkins Java)
+❌ Restarting Jenkins not done
+
+⸻
+
+✅ TL;DR (Fastest)
+
+echo | openssl s_client -connect jira.company.com:443 \
+| sed -ne '/BEGIN CERTIFICATE/,/END CERTIFICATE/p' > jira.crt
+
+
+⸻
+
+If you tell me:
+	•	Jenkins is Docker / VM
+	•	Jira is Cloud / DC
+	•	Java version (java -version)
+
+I’ll give you the exact truststore path to avoid mistakes.
