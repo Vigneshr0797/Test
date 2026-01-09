@@ -1,1 +1,21 @@
 
+Here’s a clear, DevOps-oriented table that explains the process and purpose of each task.
+This format works well for PPT, Excel, or management review.
+
+⸻
+
+DevOps Tasks – Process & Purpose
+
+Task	Detailed Process	Purpose / Outcome
+ArgoCD Webhook Setup	• Configure Git webhook endpoints for migration repositories• Validate payload structure and authentication• Trigger ArgoCD sync automatically on code changes• Test end-to-end deployment flow without manual intervention	• Enable GitOps-based automated deployments• Reduce manual deployment effort and human errors• Ensure faster and consistent application rollouts
+Jenkins–Jira Integration	• Upgrade Jenkins to the latest stable version• Install and configure Jira plugin in Jenkins• Generate and configure Jira API tokens• Map Jenkins jobs with Jira projects/issues• Validate issue status updates from CI pipelines	• Achieve CI-to-issue traceability• Improve visibility of build and deployment status• Enable automated updates to Jira issues during CI/CD execution
+Grafana & Prometheus Setup	• Configure Prometheus to scrape application and Kubernetes metrics• Define custom queries for CPU, memory, pod health, and API metrics• Create Grafana dashboards for real-time monitoring• Configure alerts for threshold breaches and failures	• Enable real-time observability of applications and infrastructure• Proactively detect performance and availability issues• Improve incident response and system reliability
+
+
+⸻
+
+If you want, I can:
+	•	Convert this into executive-friendly summary
+	•	Add tools & deliverables column
+	•	Tailor it specifically for banking / audit / compliance review
+	•	Format it exactly like your existing PPT slide
