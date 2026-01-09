@@ -19,3 +19,26 @@ If you want, I can:
 	•	Add tools & deliverables column
 	•	Tailor it specifically for banking / audit / compliance review
 	•	Format it exactly like your existing PPT slide
+
+
+
+
+	Jira Project Issue Type & Workflow Configuration
+• Review existing Jira project configurations• Create or modify issue types (Story, Task, Bug, Change, Incident)• Design and update workflows aligned with DevOps lifecycle• Configure transitions, approvals, and status conditions• Validate workflow mapping with Jenkins pipelines
+• Standardize issue tracking across DevOps activities• Enforce controlled change and release management• Improve traceability and compliance with SDLC processes
+Jenkins Setup on New Servers
+• Provision new Jenkins servers in target environments• Install required dependencies (Java, Git, Maven, Docker, plugins)• Migrate Jenkins configurations, jobs, and credentials• Configure security, backup, and access controls• Validate CI/CD pipelines on new servers
+• Improve platform stability and scalability• Support environment segregation (UAT/Prod)• Ensure secure and reliable CI/CD operations
+
+
+
+
+
+
+
+Jira Project Issue Type & Workflow Configuration
+• Review existing Jira project configurations• Create or modify issue types (Story, Task, Bug, Change, Incident)• Design and update workflows aligned with DevOps lifecycle• Configure transitions, approvals, and status conditions• Validate workflow mapping with Jenkins pipelines
+• Standardize issue tracking across DevOps activities• Enforce controlled change and release management• Improve traceability and compliance with SDLC processes
+Jenkins Setup on New Servers
+• Provision new Jenkins servers in target environments• Install required dependencies (Java, Git, Maven, Docker, plugins)• Migrate Jenkins configurations, jobs, and credentials• Configure security, backup, and access controls• Validate CI/CD pipelines on new servers
+• Improve platform stability and scalability• Support environment segregation (UAT/Prod)• Ensure secure and reliable CI/CD operations
